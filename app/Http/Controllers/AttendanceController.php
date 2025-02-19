@@ -10,9 +10,12 @@ class AttendanceController extends Controller
 {
     public function attendance()
     {
-        $devices = DB::select("SELECT device_id, ipv4_addr, port, branch_id, device_title FROM ct_hr_attendance_device_master WHERE is_deleted_flag = 'n'");
+        set_time_limit(0); 
     
-        if (!$devices) {
+        $devices = DB::select("SELECT device_id, ipv4_addr, port, branch_id, device_title FROM ct_hr_attendance_device_master WHERE is_deleted_flag = 'n' AND device_id = 3");
+     
+        if (!$devices) 
+        {
             return response()->json(['error' => 'No devices found'], 404);
         }
     
@@ -41,10 +44,12 @@ class AttendanceController extends Controller
                 if ($zk_device_connection->connect()) 
                 {
                     $attendance_logs = $zk_device_connection->getAttendance();
-                    $zk_device_connection->disconnect();
-    
+                    echo "<pre>";
+                    print_r($attendance_logs);
+                    die();
                     foreach ($attendance_logs as $attendance) 
                     {
+                        $uId = $attendance['uid'];
                         $attendance_id_no = $attendance['id'];
                         $log_date_time = $attendance['timestamp'];
                         $log_date_only = substr($log_date_time, 0, 10);
@@ -64,9 +69,12 @@ class AttendanceController extends Controller
                             'created_by' => $created_by,
                             'created_date' => $created_date,
                         ]);
-    
+
                         $inserted_count += 1;
                     }
+
+                    // $zk_device_connection->clearAttendance();
+                    $zk_device_connection->disconnect();
     
                     $results[] = [
                         'message' => 'Attendance logs inserted successfully!',
@@ -90,7 +98,7 @@ class AttendanceController extends Controller
             else 
             {
                 $message = "Unable to ping!";
-                
+
                 $this->insertDeviceLog($device_id, $device_ip, $ping_status, $branch_id, $connection_status, $message);
     
                 $results[] = [
