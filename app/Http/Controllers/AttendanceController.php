@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Rats\Zkteco\Lib\ZKTeco;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -44,6 +45,7 @@ class AttendanceController extends Controller
                 if ($zk_device_connection->connect()) 
                 {
                     $attendance_logs = $zk_device_connection->getAttendance();
+                    
                     echo "<pre>";
                     print_r($attendance_logs);
                     die();
@@ -81,6 +83,8 @@ class AttendanceController extends Controller
                         'device' => $device_title,
                         'inserted_count' => $inserted_count,
                     ];
+
+                    Log::info('Attendance Logs: '. json_encode($results));
                 } 
                 else 
                 {
@@ -93,6 +97,8 @@ class AttendanceController extends Controller
                         'device' => $device_title,
                         'message' => 'Unable to connect to device! Log inserted.',
                     ];
+
+                    Log::info('Attendance Logs: '. json_encode($results));
                 }
             } 
             else 
@@ -105,6 +111,8 @@ class AttendanceController extends Controller
                     'device' => $device_title,
                     'message' => 'Ping failed! Log inserted.',
                 ];
+
+                Log::info('Attendance Logs: '. json_encode($results));
             }
         }
     
