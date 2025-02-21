@@ -46,8 +46,8 @@ class AttendanceController extends Controller
                 {
                     $attendance_logs = $zk_device_connection->getAttendance();
                     
-                    echo "<pre>";
-                    print_r($attendance_logs);
+                    Log::info(json_encode($attendance_logs));
+
                     die();
                     foreach ($attendance_logs as $attendance) 
                     {

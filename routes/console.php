@@ -9,5 +9,6 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('log:time-every-minute')->everyMinute();
+// Schedule::command('log:time-every-minute')->everyMinute();
+Schedule::command('attendance:sync')->everyMinute();
 
